@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Списки покупок</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Списки покупок</h1>
+</header>
+<div class="lists-container">
+</div>
+<input type="text" id="list-name-input" placeholder="Введите имя списка">
+<button id="add-list-btn">Добавить список покупок</button>
+<script src="script.js"></script>
+</body>
+</html>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.lists-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.shopping-list {
+    border: 2px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    width: 300px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.shopping-list:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.shopping-list input[type="text"] {
+    margin-bottom: 10px;
+    width: calc(100% - 20px);
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.add-item-form {
+    margin-top: 10px;
+}
+
+.delete-list-btn {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-list-btn:hover {
+    background-color: #d32f2f;
+}
+
+.checkbox {
+    margin-right: 10px;
+}
+
+.shopping-list-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.checked {
+    text-decoration: line-through;
+    color: #888;
+}
+</style>
+
+<script>
+ const listsContainer = document.querySelector('.lists-container');
+const addListBtn = document.getElementById('add-list-btn');
+
+addListBtn.addEventListener('click', createShoppingList);
+
+function createShoppingList() {
+    const listNameInput = document.getElementById('list-name-input');
+    const listName = listNameInput.value.trim();
+    
+    if (!listName) {
+        alert('Пожалуйста, введите название списка');
+        return;
+    }
+
+    const shoppingList = document.createElement('div');
+    shoppingList.classList.add('shopping-list');
+
+    // Создание заголовка списка с именем
+    const listTitle = document.createElement('h2');
+    listTitle.textContent = listName;
+    shoppingList.appendChild(listTitle);
+
+    // Генерация случайного цвета для фона списка
+    const randomColor = getRandomColor();
+    shoppingList.style.backgroundColor = randomColor;
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Введите элемент списка';
+    
+    const addItemBtn = document.createElement('button');
+    addItemBtn.textContent = 'Добавить';
+    addItemBtn.addEventListener('click', addItemToList);
+
+    const deleteListBtn = document.createElement('button');
+    deleteListBtn.classList.add('delete-list-btn');
+    deleteListBtn.textContent = 'Удалить список';
+    deleteListBtn.addEventListener('click', () => {
+        shoppingList.remove();
+    });
+
+    shoppingList.appendChild(input);
+    shoppingList.appendChild(addItemBtn);
+    shoppingList.appendChild(deleteListBtn);
+
+    listsContainer.appendChild(shoppingList);
+
+    // Очистить поле ввода имени списка после создания списка
+    listNameInput.value = '';
+}
+
+function addItemToList(event) {
+    const input = event.target.previousElementSibling;
+    const item = input.value.trim();
+    if (item) {
+        const newItem = document.createElement('div');
+        newItem.classList.add('shopping-list-item');
+        
+        // Создаем чекбокс
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.classList.add('checkbox');
+        checkbox.addEventListener('click', toggleChecked);
+        
+        newItem.appendChild(checkbox);
+        
+        // Создаем элемент списка
+        const text = document.createElement('span');
+        text.textContent = item;
+        newItem.appendChild(text);
+
+        event.target.parentElement.insertBefore(newItem, input);
+
+        input.value = '';
+    }
+}
+
+function toggleChecked(event) {
+    const item = event.target.nextElementSibling; // получаем элемент списка (следующий элемент после чекбокса)
+    item.classList.toggle('checked');
+}
+
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+</script>
